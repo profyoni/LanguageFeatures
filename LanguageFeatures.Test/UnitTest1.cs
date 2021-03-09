@@ -88,18 +88,81 @@ namespace LanguageFeatures.Test
             Assert.AreEqual(5050, sum);
         }
 
+        [TestMethod]
+        public void FirstElt()
+        {
+            var enumerator = Foo.Range1(1, 100_000_001).GetEnumerator();
+                enumerator.MoveNext();
+            int x = enumerator.Current;
+            Assert.AreEqual(1, x);
+
+            enumerator = Foo.Range3(1, 100_000_001).GetEnumerator();
+            enumerator.MoveNext();
+            x = enumerator.Current;
+            Assert.AreEqual(1, x);
+
+            enumerator = Foo.Range2(1, 100_000_001).GetEnumerator();
+            enumerator.MoveNext();
+            x = enumerator.Current;
+            Assert.AreEqual(1, x);
+        }
 
         [TestMethod]
         public void Linq1()
         {
-            var multiplesOf3 = 
+            var multiplesOf3 =
                 Foo.Range1(1, 101).Where(Div3);
+            Assert.AreEqual(33, multiplesOf3.Count());
+        }
+
+        [TestMethod]
+        public void Linq2()
+        {
+            var multiplesOf3 =
+                Foo.Range2(1, 101).Where(Div3);
+            Assert.AreEqual(33, multiplesOf3.Count());
+        }
+
+        [TestMethod]
+        public void Linq3()
+        {
+            var multiplesOf3 =
+                Foo.Range3(1, 101).Where(Div3);
             Assert.AreEqual(33, multiplesOf3.Count());
         }
 
         private bool Div3(int arg)
         {
             return arg % 3 == 0;
+        }
+
+        // Deferred Execution  -delay execution until the value is needed - optimization avoid computation if not actually needed
+        // Method Extension Syntax
+        // Query Syntax
+        [TestMethod]
+        public void Linq5()
+        {
+            Func<int, bool> myfunction = Over80;
+
+            // Specify the data source.
+            int[] scores = new int[] { 97, 43, 23, 65, 67, 97, 92, 81, 60 };
+
+            // Define the query expression.
+            IEnumerable<int> scoreQuery =
+                from score in scores
+                where score > 80
+                select score;
+
+            var firstOver80 = scores.Where(myfunction).First();
+
+            Assert.AreEqual(97, firstOver80);
+        }
+           
+        static int count;
+        private bool Over80(int g)
+        {
+            Console.WriteLine(count++);
+            return g > 80;
         }
     }
 

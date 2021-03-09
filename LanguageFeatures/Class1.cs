@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace LanguageFeatures
@@ -63,7 +64,7 @@ public class Foo
     // enumerator uses lazy evaluation = Just In Time
     public static IEnumerable<int> Range1(int min, int max) // Iterable
     {
-        for (int x = min; x < max; x = x+1)
+        for (int x = min; x < max; x++)
             yield return x; // stores the current stack record to return to
     }
 
@@ -75,6 +76,65 @@ public class Foo
             list.Add(x);
         return list;
     }
+
+    //Using standard Enumerator
+    public static IEnumerable<int> Range3(int min, int max) // Iterable
+    {
+        return new MyEnumerable(min, max);
+    }
+}
+
+public class MyEnumerable : IEnumerable<int>
+{
+    private readonly int _min;
+    private readonly int _max;
+
+    public MyEnumerable(int min, int max)
+    {
+        _min = min;
+        _max = max;
+    }
+
+    public IEnumerator<int> GetEnumerator()
+    {
+        return new MyEnumerator(_min, _max);
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+}
+
+public class MyEnumerator : IEnumerator<int>
+{
+    private readonly int _min;
+    private readonly int _max;
+    public MyEnumerator(int min, int max)
+    {
+        _min = min;
+        _max = max;
+    }
+
+    public bool MoveNext()
+    {
+        if (Current >= _max)
+            return false;
+        Current++;
+        return true;
+    }
+
+    public void Reset()
+    {
+        Current = _min;
+    }
+
+    public int Current { get; private set; }
+
+    object IEnumerator.Current => Current;
+
+    public void Dispose()
+    { }
 }
 
 public interface IFoo
