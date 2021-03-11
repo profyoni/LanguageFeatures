@@ -141,3 +141,30 @@ public interface IFoo
 {
     double method(double elt);
 }
+
+public static class Homework1 // all methods must be static - utility class, uninstantiable
+{
+    public static IEnumerable<int> Primes()
+    {
+        for (int i = 2; i < Int32.MaxValue; i++)
+        {
+            if (IsPrime(i))
+                yield return i;
+        }
+    }
+
+    public static bool IsPrime(this int n)
+    {
+        if (n == 2)
+            return true;
+        if (n == 1)
+            return false;
+        for (int i = 2; i <= Math.Sqrt(n);i++)
+        {
+            if (n % i == 0)
+                return false;
+        }
+        return true;
+
+    }
+}
