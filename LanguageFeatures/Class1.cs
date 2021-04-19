@@ -57,6 +57,25 @@ namespace LanguageFeatures
 
 }
 
+public class Person
+{
+    public String FirstName { get; set; }
+    public String LastName { get; set; }
+
+    public static IEnumerable<Person> MakePeople()
+    {
+        for (int i = 0; i < 26; i++)
+        {
+            yield return new Person
+            {
+                FirstName = "" + (char)(i+'A') + "rishon",
+                LastName = "" + (char)(i + 'A') + "qua"
+            };
+        }
+    }
+}
+
+
 public class Foo
 {
     public void Bar() { }
